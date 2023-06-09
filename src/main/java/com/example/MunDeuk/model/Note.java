@@ -45,6 +45,12 @@ public class Note {
     private String longitude;               /* 경도 */
 
     @Column
+    private int viewCount;
+
+    @Column
+    private int likeCount;
+
+    @Column
     private LocalDateTime createdAt;
 
     @Column
@@ -74,9 +80,28 @@ public class Note {
         note.setLatitude(locationDto.getLatitude());
         note.setLongitude(locationDto.getLongitude());
         note.setIsDeleted(false);
+        note.setViewCount(0);
+        note.setLikeCount(0);
         note.setCreatedAt(LocalDateTime.now());
         note.setModifiedAt(LocalDateTime.now());
 
         return note;
+    }
+
+    //노트 수정
+    public static Note modifyNote(Note note, NoteDTO noteDto){
+
+        note.setContent(noteDto.getContent());
+        note.setImageUrl(noteDto.getImageUrl());
+        note.setMusicUrl(noteDto.getMusicUrl());
+        note.setModifiedAt(LocalDateTime.now());
+
+        return note;
+    }
+
+
+    //viewCount update
+    public void updateView(Note note, int viewCount) {
+        note.setViewCount(viewCount);
     }
 }
