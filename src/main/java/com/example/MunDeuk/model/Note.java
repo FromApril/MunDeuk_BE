@@ -1,107 +1,71 @@
 package com.example.MunDeuk.model;
 
-import com.example.MunDeuk.dto.NoteDTO;
+import com.example.MunDeuk.dto.ForWriteRequestDto;
 import com.example.MunDeuk.dto.LocationDTO;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.MunDeuk.dto.NoteDTO;
+import com.example.MunDeuk.enums.NoteState;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.*;
 
-import java.time.LocalDateTime;
-
-/**
- * The type Feed.
- */
-//@EqualsAndHashCode(callSuper = true) **이거 뭐임?
-@Data
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
 @Entity
+@Getter
+@Setter
+@Table(name = "notes")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="feed_id")
     private Long id;
 
-    @Column
+    @Column(name = "contents",length = 500)
     private String content;
 
     @Column
-    private String imageUrl;
+    private NoteState noteState;
 
     @Column
-    private String musicUrl;
+    private Long viewCount;
 
     @Column
-    private Boolean isDeleted;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private String userNick;
+    private Long likeCount;
 
     @Column
-    private String latitude;                /* 위도 */
+    private Double latitude;
 
     @Column
-    private String longitude;               /* 경도 */
+    private Double longitude;
 
-    @Column
-    private int viewCount;
 
-    @Column
-    private int likeCount;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private Member ownerId;
 
-    @Column
-    private LocalDateTime createdAt;
+    @ManyToOne
+    @JoinColumn(name = "origin_id")
+    private Member originId;
 
-    @Column
-    private LocalDateTime modifiedAt;
-
-    /**
-     * Note 생성 메소드
-     *
-     * @author Wonjun Choi
-     *
-     * @param noteDto     노트의 텍스트 내용, 업로드된 이미지 URL, 음악 URL
-     * @param userNick    사용자 정보
-     * @param locationDto 위치정보(위도, 경도)
-     * @return note       생성된 노트 객체
-     *
-     * @exception
-     * @See
-     */
-    public static Note createNote(NoteDTO noteDto, String userNick, LocationDTO locationDto) {
-
-        Note note = new Note() ;
-
-        note.setContent(noteDto.getContent());
-        note.setImageUrl(noteDto.getImageUrl());
-        note.setMusicUrl(noteDto.getMusicUrl());
-        note.setUserNick(userNick);
-        note.setLatitude(locationDto.getLatitude());
-        note.setLongitude(locationDto.getLongitude());
-        note.setIsDeleted(false);
-        note.setViewCount(0);
-        note.setLikeCount(0);
-        note.setCreatedAt(LocalDateTime.now());
-        note.setModifiedAt(LocalDateTime.now());
-
-        return note;
+    @Builder
+    public Note(ForWriteRequestDto requestDto){
+        this.content = requestDto.getContent();
+        this.viewCount = 0L;
+        this.noteState = NoteState.ACTIVE;
     }
 
-    //노트 수정
-    public static Note modifyNote(Note note, NoteDTO noteDto){
-
-        note.setContent(noteDto.getContent());
-        note.setImageUrl(noteDto.getImageUrl());
-        note.setMusicUrl(noteDto.getMusicUrl());
-        note.setModifiedAt(LocalDateTime.now());
-
-        return note;
+    public void addViewCount(Note note){
+        note.viewCount += 1;
     }
 
-
-    //viewCount update
-    public void updateView(Note note, int viewCount) {
-        note.setViewCount(viewCount);
+    public static Note createNote(NoteDTO noteDto, String userNick, LocationDTO locationDto){
+        return null;
     }
+
 }

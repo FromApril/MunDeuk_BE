@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class LocationDTO {
-    private final String latitude;      /* 위도 */
-    private final String longitude;     /* 경도 */
+    private final Double latitude;      /* 위도 */
+    private final Double longitude;     /* 경도 */
 }
